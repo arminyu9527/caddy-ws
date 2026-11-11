@@ -1,0 +1,27 @@
+{
+	email {$CADDY_EMAIL}
+	auto_https disable_redirects
+}
+
+:80 {
+	respond /healthz 200
+	redir https://{$CADDY_DOMAIN}{uri}
+}
+
+{$CADDY_DOMAIN}:443 {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "no-referrer"
+	}
+
+	@vless path {$WS_VLESS_PATH}
+	reverse_proxy @vless {$VLESS_UPSTREAM}
+
+	@vmess path {$WS_VMESS_PATH}
+	reverse_proxy @vmess {$VMESS_UPSTREAM}
+
+	respond 404
+}

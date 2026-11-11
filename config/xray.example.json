@@ -1,0 +1,53 @@
+{
+  "log": {
+    "loglevel": "warning"
+  },
+  "inbounds": [
+    {
+      "tag": "vless-ws",
+      "listen": "127.0.0.1",
+      "port": 10000,
+      "protocol": "vless",
+      "settings": {
+        "clients": [
+          {
+            "id": "2d8fa6af-8380-441a-93d3-5282f44b43c3"
+          }
+        ],
+        "decryption": "none"
+      },
+      "streamSettings": {
+        "network": "ws",
+        "wsSettings": {
+          "path": "/ws-vless"
+        }
+      }
+    },
+    {
+      "tag": "vmess-ws",
+      "listen": "127.0.0.1",
+      "port": 10001,
+      "protocol": "vmess",
+      "settings": {
+        "clients": [
+          {
+            "id": "2d8fa6af-8380-441a-93d3-5282f44b43c3",
+            "alterId": 0
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "wsSettings": {
+          "path": "/ws-vmess"
+        }
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "tag": "direct"
+    }
+  ]
+}
