@@ -1,30 +1,21 @@
 FROM alpine:3.21 AS downloader
 
-ARG XRAY_VERSION=1.8.24
-ARG CADDY_VERSION=2.10.0
-ARG CLOUDFLARED_VERSION=2026.11.0
+RUN apk add --no-cache curl unzip
 
-RUN apk add --no-cache curl unzip tar
-
-RUN curl -fsSL -o /tmp/xray.zip "https://github.com/XTLS/Xray-core/releases/download/v${XRAY_VERSION}/Xray-linux-64.zip" \
+RUN curl -fsSL -o /tmp/xray.zip "https://github.com/XTLS/Xray-core/releases/latest/download/Xray-linux-64.zip" \
     && unzip -q /tmp/xray.zip -d /tmp/xray \
     && install -m 0755 /tmp/xray/xray /usr/local/bin/xray
 
-RUN curl -fsSL -o /tmp/caddy.tar.gz "https://github.com/caddyserver/caddy/releases/download/v${CADDY_VERSION}/caddy_${CADDY_VERSION}_linux_amd64.tar.gz" \
-    && tar -xzf /tmp/caddy.tar.gz -C /tmp \
-    && install -m 0755 /tmp/caddy /usr/local/bin/caddy
-
-RUN curl -fsSL -o /usr/local/bin/cloudflared "https://github.com/cloudflare/cloudflared/releases/download/${CLOUDFLARED_VERSION}/cloudflared-linux-amd64" \
+RUN curl -fsSL -o /usr/local/bin/cloudflared "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64" \
     && chmod 0755 /usr/local/bin/cloudflared
 
 FROM alpine:3.21
 
-RUN apk add --no-cache ca-certificates tzdata \
+RUN apk add --no-cache ca-certificates tzdata caddy \
     && addgroup -S app \
     && adduser -S -D -H -G app app
 
 COPY --from=downloader /usr/local/bin/xray /usr/local/bin/xray
-COPY --from=downloader /usr/local/bin/caddy /usr/local/bin/caddy
 COPY --from=downloader /usr/local/bin/cloudflared /usr/local/bin/cloudflared
 
 COPY docker/entrypoint.sh /entrypoint.sh

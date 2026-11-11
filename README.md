@@ -6,6 +6,11 @@
 docker build -t xray-caddy:latest .
 ```
 
+Build source behavior:
+- Xray: downloads `releases/latest/download/Xray-linux-64.zip`
+- cloudflared: downloads `releases/latest/download/cloudflared-linux-amd64`
+- Caddy: installed from Alpine package (`apk add caddy`)
+
 ## Run
 
 ```bash
